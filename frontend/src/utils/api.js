@@ -51,3 +51,29 @@ export const logoutUser = () => {
 };
 
 export default api;
+
+//get all expenses
+export const getExpenses = (params) =>{
+  return api.get('/expenses',{params});
+};
+
+//get a single expenses by ID
+export const getExpenseById = (id) =>{
+  return api.get(`/expenses/${id}`);
+};
+
+//create a new expenses
+export const createExpense = (expenseData) =>{
+  return api.post('/expenses/',expenseData);
+};
+
+//update an exitiing expense
+export const updateExpense = (id, expenseData) =>{
+  return api.put(`/expenses/${id}`,expenseData);
+};
+
+//Delete an expense
+export const deleteExpense = (id) =>{
+
+  return api.delete(`/expenses/${id}`);
+};
