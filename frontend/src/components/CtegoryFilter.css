@@ -1,0 +1,27 @@
+.category-filter-container {
+  display: flex;
+  align-items: center;
+}
+
+
+.category-select {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.category-select:focus {
+  border-color: #0066cc;
+  box-shadow: 0 0 4px rgba(0, 102, 204, 0.3);
+}
+
+.category-select.active {
+  border-color: #0066cc;
+  background-color: #f0f7ff;
+  font-weight: 500;
+}
