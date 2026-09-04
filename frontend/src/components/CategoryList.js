@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
+import CategoryBadge from "./CategoryBadge";
 
-const CategoryDropdown = ({
-  selectedCategoryId,
-  onCategoryChange
-}) => {
+const CategoryList = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -52,37 +50,31 @@ const CategoryDropdown = ({
   }
 
   return (
-    <div className="category-dropdown">
-      <label htmlFor="category">
-        Category
-      </label>
+    <div className="category-list">
+      <h2>Categories</h2>
 
-      <select
-        id="category"
-        value={selectedCategoryId || ""}
-        onChange={(e) => {
-          const value = e.target.value;
-
-          onCategoryChange(
-            value ? Number(value) : null
-          );
-        }}
-      >
-        <option value="">
-          Select a category
-        </option>
-
-        {categories.map((category) => (
-          <option
-            key={category.id}
-            value={category.id}
-          >
-            {category.name}
-          </option>
-        ))}
-      </select>
+      {categories.length === 0 ? (
+        <p>No categories found.</p>
+      ) : (
+        <div>
+          {categories.map((category) => (
+            <div
+              key={category.id}
+              style={{
+                marginBottom: "10px"
+              }}
+            >
+              <CategoryBadge
+                name={category.name}
+                color={category.color}
+                size="medium"
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-export default CategoryDropdown;
+export default CategoryList;
