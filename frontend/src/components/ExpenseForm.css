@@ -1,0 +1,60 @@
+.expense-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.cancel-btn {
+  min-height: 46px;
+  padding: 0 20px;
+  background-color: #ffffff;
+  color: #475569;
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background-color: #f1f5f9;
+}
+
+.cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Expense form page */
+.expense-form-page {
+  max-width: 560px;
+  margin: 40px auto;
+  padding: 28px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.expense-form-page h2 {
+  font-size: 22px;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+.form-error-banner {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #ef4444;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 16px;
+}

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 
 import CategoryDropdown from "./CategoryDropdown";
+import './ExpenseForm.css';
 
-const ExpenseForm = ({ onAddExpense }) => {
+const ExpenseForm = ({ initialData, categories, onSubmit, onCancel, isSubmitting, isEditMode }) => {
     const [formData, setFormData] = useState({
-        amount: '',
-        date: '',
-        category: '',
-        description: '',
+        amount: initialData?.amount ?? '',
+        date: initialData?.date ?? '',
+        category: initialData?.category_id ?? '',
+        description: initialData?.description ?? '',
     });
 
     const [errors, setErrors] = useState({});
@@ -25,6 +26,20 @@ const ExpenseForm = ({ onAddExpense }) => {
             setErrors((prev) => ({
                 ...prev,
                 [name]: ''
+            }));
+        }
+    };
+
+    const handleCategoryChange = (categoryId) => {
+        setFormData((prev) => ({
+            ...prev,
+            category: categoryId ?? ''
+        }));
+
+        if (errors.category) {
+            setErrors((prev) => ({
+                ...prev,
+                category: ''
             }));
         }
     };
@@ -59,29 +74,23 @@ const ExpenseForm = ({ onAddExpense }) => {
         }
 
         // Pass structured data up to parent component
-        if (onAddExpense) {
-            onAddExpense({
-                ...formData,
+        if (onSubmit) {
+            onSubmit({
                 amount: parseFloat(formData.amount),
+                date: formData.date,
+                category_id: Number(formData.category),
+                description: formData.description.trim(),
             });
         }
-
-        // Reset form after successful submit
-        setFormData({
-            amount: '',
-            date: '',
-            category: '',
-            description: '',
-        });
-
-        setErrors({});
     };
+
+    const errorStyle = { color: 'red', fontSize: '13px', display: 'block', marginTop: '4px' };
 
     return (
         <form onSubmit={handleSubmit} className="expense-form">
 
-            <div>
-                <label htmlFor="amount">Amount</label>
+            <div className="form-group">
+                <label htmlFor="amount" className="form-label">Amount</label>
 
                 <input
                     type="number"
@@ -91,17 +100,18 @@ const ExpenseForm = ({ onAddExpense }) => {
                     placeholder="0.00"
                     value={formData.amount}
                     onChange={handleChange}
+                    className={`form-input ${errors.amount ? 'input-error' : ''}`}
                 />
 
                 {errors.amount && (
-                    <span style={{ color: 'red' }}>
+                    <span style={errorStyle}>
                         {errors.amount}
                     </span>
                 )}
             </div>
 
-            <div>
-                <label htmlFor="date">Date</label>
+            <div className="form-group">
+                <label htmlFor="date" className="form-label">Date</label>
 
                 <input
                     type="date"
@@ -109,42 +119,43 @@ const ExpenseForm = ({ onAddExpense }) => {
                     name="date"
                     value={formData.date}
                     onChange={handleChange}
+                    className={`form-input ${errors.date ? 'input-error' : ''}`}
                 />
 
                 {errors.date && (
-                    <span style={{ color: 'red' }}>
+                    <span style={errorStyle}>
                         {errors.date}
                     </span>
                 )}
             </div>
 
-            <div>
-                <CategoryDropdown
-                    selectedCategoryId={formData.category}
-                    onCategoryChange={(categoryId) => {
-                        setFormData((prev) => ({
-                            ...prev,
-                            category: categoryId
-                        }));
-
-                        if (errors.category) {
-                            setErrors((prev) => ({
-                                ...prev,
-                                category: ''
-                            }));
-                        }
-                    }}
-                />
+            <div className="form-group">
+                {categories && categories.length > 0 ? (
+                    <CategoryDropdown
+                        key={initialData?.category_id || 'new'}
+                        categories={categories}
+                        selectedCategoryId={formData.category}
+                        onCategoryChange={handleCategoryChange}
+                    />
+                ) : (
+                    <>
+                        <label htmlFor="category" className="form-label">Category</label>
+                        <CategoryDropdown
+                            selectedCategoryId={formData.category}
+                            onCategoryChange={handleCategoryChange}
+                        />
+                    </>
+                )}
 
                 {errors.category && (
-                    <span style={{ color: 'red' }}>
+                    <span style={errorStyle}>
                         {errors.category}
                     </span>
                 )}
             </div>
 
-            <div>
-                <label htmlFor="description">
+            <div className="form-group">
+                <label htmlFor="description" className="form-label">
                     Description
                 </label>
 
@@ -155,12 +166,23 @@ const ExpenseForm = ({ onAddExpense }) => {
                     placeholder="What was this expense for?"
                     value={formData.description}
                     onChange={handleChange}
+                    className="form-input"
                 />
             </div>
 
-            <button type="submit">
-                Add Expense
-            </button>
+            <div className="form-actions">
+                <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                    {isSubmitting
+                        ? (isEditMode ? 'Saving...' : 'Adding...')
+                        : (isEditMode ? 'Save Changes' : 'Add Expense')}
+                </button>
+
+                {onCancel && (
+                    <button type="button" className="cancel-btn" onClick={onCancel} disabled={isSubmitting}>
+                        Cancel
+                    </button>
+                )}
+            </div>
 
         </form>
     );

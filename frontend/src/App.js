@@ -4,6 +4,8 @@ import axios from 'axios';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
+import ExpensesPage from './pages/ExpensesPage';
+import ExpenseFormPage from './pages/ExpenseFormPage';
 import './styles/auth.css';
 
 // Protected Route Component
@@ -44,6 +46,30 @@ function App() {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/expenses"
+          element={
+            <ProtectedRoute>
+              <ExpensesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/expenses/new"
+          element={
+            <ProtectedRoute>
+              <ExpenseFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/expenses/:id/edit"
+          element={
+            <ProtectedRoute>
+              <ExpenseFormPage />
             </ProtectedRoute>
           }
         />

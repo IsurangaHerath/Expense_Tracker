@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
 
 const CategoryDropdown = ({
+  categories: providedCategories,
   selectedCategoryId,
   onCategoryChange
 }) => {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState(providedCategories || []);
+  const [loading, setLoading] = useState(!providedCategories);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (providedCategories) {
+      setCategories(providedCategories);
+      setLoading(false);
+      return;
+    }
+
     const fetchCategories = async () => {
       try {
         setLoading(true);
@@ -41,7 +48,7 @@ const CategoryDropdown = ({
     };
 
     fetchCategories();
-  }, []);
+  }, [providedCategories]);
 
   if (loading) {
     return <div>Loading categories...</div>;
@@ -53,12 +60,13 @@ const CategoryDropdown = ({
 
   return (
     <div className="category-dropdown">
-      <label htmlFor="category">
+      <label htmlFor="category-select" className="form-label">
         Category
       </label>
 
       <select
-        id="category"
+        id="category-select"
+        className="form-input"
         value={selectedCategoryId || ""}
         onChange={(e) => {
           const value = e.target.value;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ExpenseForm from '../components/ExpenseForm';
+import api, { getExpenseById, createExpense, updateExpense } from '../utils/api';
 
 const ExpenseFormPage = () => {
   const { id } = useParams();
@@ -20,19 +21,18 @@ const ExpenseFormPage = () => {
         setLoading(true);
         setError('');
 
-        const catRes = await fetch('/api/v1/categories');
-        if (!catRes.ok) throw new Error('Failed to load categories');
-        const catData = await catRes.json();
-        setCategories(catData.data || catData);
+        const catRes = await api.get('/categories');
+        setCategories(catRes.data?.data?.categories || []);
 
         if (isEditMode) {
-          const expRes = await fetch(`/api/v1/expenses/${id}`);
-          if (!expRes.ok) throw new Error('Failed to fetch expense details');
-          const expData = await expRes.json();
-          setInitialData(expData.data || expData);
+          const expRes = await getExpenseById(id);
+          setInitialData(expRes.data?.data?.expense || null);
         }
       } catch (err) {
-        setError(err.message || 'Something went wrong while loading data.');
+        setError(
+          err.response?.data?.message ||
+            'Something went wrong while loading data.'
+        );
       } finally {
         setLoading(false);
       }
@@ -46,24 +46,21 @@ const ExpenseFormPage = () => {
     setSubmitting(true);
     setError('');
 
-    const url = isEditMode ? `/api/v1/expenses/${id}` : '/api/v1/expenses';
-    const method = isEditMode ? 'PUT' : 'POST';
-
     try {
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to save expense.');
+      if (isEditMode) {
+        await updateExpense(id, payload);
+      } else {
+        await createExpense(payload);
       }
 
       navigate('/expenses');
     } catch (err) {
-      setError(err.message || 'An error occurred while saving.');
+      const details = err.response?.data?.error?.details;
+      setError(
+        (Array.isArray(details) && details.length > 0 ? details.join(', ') : null) ||
+          err.response?.data?.message ||
+          'An error occurred while saving.'
+      );
     } finally {
       setSubmitting(false);
     }
@@ -74,11 +71,11 @@ const ExpenseFormPage = () => {
   }
 
   return (
-    <div style={{ maxWidth: '600px', margin: '30px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
+    <div className="expense-form-page">
       <h2>{isEditMode ? 'Edit Expense' : 'Add New Expense'}</h2>
 
       {error && (
-        <div style={{ color: 'red', marginBottom: '15px', padding: '10px', background: '#ffe6e6', borderRadius: '4px' }}>
+        <div className="form-error-banner" role="alert">
           {error}
         </div>
       )}

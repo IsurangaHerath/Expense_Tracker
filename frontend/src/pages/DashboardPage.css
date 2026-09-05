@@ -1,0 +1,289 @@
+/* Dashboard page - uses same design tokens as auth.css
+   Primary: #4F46E5, Text: #1E293B, Muted: #64748B, Bg: #F8FAFC */
+
+.dashboard-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+}
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 24px;
+}
+
+.dashboard-title {
+  font-size: 24px;
+  color: #1e293b;
+}
+
+.dashboard-subtitle {
+  color: #64748b;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.header-btn {
+  padding: 10px 18px;
+  min-height: 44px;
+  background-color: #4f46e5;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.header-btn:hover {
+  background-color: #4338ca;
+}
+
+.header-btn-secondary {
+  background-color: #ffffff;
+  color: #4f46e5;
+  border: 1px solid #c7d2fe;
+}
+
+.header-btn-secondary:hover {
+  background-color: #eef2ff;
+}
+
+.logout-btn {
+  padding: 10px 18px;
+  min-height: 44px;
+  background-color: #ef4444;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #dc2626;
+}
+
+/* Loading / error states */
+.dashboard-state {
+  padding: 60px 24px;
+  text-align: center;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.dashboard-state.error {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+/* Total hero */
+.total-hero {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  border-radius: 12px;
+  padding: 28px 32px;
+  color: #ffffff;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 25px -8px rgba(79, 70, 229, 0.5);
+}
+
+.total-hero span {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.85;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.total-hero h1 {
+  font-size: 40px;
+  font-weight: 700;
+}
+
+/* Summary cards */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 10px -4px rgba(30, 41, 59, 0.12);
+  border-top: 4px solid #4f46e5;
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+.card-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.card-subtitle {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 6px;
+}
+
+/* Main grid */
+.dashboard-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 800px) {
+  .dashboard-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 10px -4px rgba(30, 41, 59, 0.12);
+}
+
+/* Chart */
+.chart-wrapper h3,
+.recent-wrapper h3 {
+  font-size: 16px;
+  color: #1e293b;
+  margin-bottom: 16px;
+}
+
+.no-data {
+  color: #94a3b8;
+  font-size: 14px;
+  padding: 20px 0;
+  text-align: center;
+}
+
+/* Category breakdown list */
+.category-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #475569;
+}
+
+.category-item .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.category-item strong {
+  color: #1e293b;
+}
+
+/* Recent expenses list */
+.recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.recent-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.recent-item:last-child {
+  border-bottom: none;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-date {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.item-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.category-pill {
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.item-amount {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ef4444;
+  white-space: nowrap;
+}
