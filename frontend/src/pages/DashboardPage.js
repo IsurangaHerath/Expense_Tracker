@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { logoutUser } from '../utils/api';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { logoutUser } from "../utils/api";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import SummaryCard from "../components/SummaryCard";
+import CategoryChart from "../components/CategoryChart";
+import RecentExpenses from "../components/RecentExpenses";
+import "./DashboardPage.css";
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -12,14 +18,14 @@ function DashboardPage() {
     try {
       await logoutUser();
     } catch (err) {
-      console.error('Logout error:', err);
+      console.error("Logout error:", err);
     } finally {
       // 1. Remove token from localStorage
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
       // 2. Remove axios default header
-      delete axios.defaults.headers.common['Authorization'];
+      delete axios.defaults.headers.common["Authorization"];
       // 3. Redirect to /login
-      navigate('/login');
+      navigate("/login");
     }
   };
 
@@ -28,8 +34,10 @@ function DashboardPage() {
       <div className="dashboard-container">
         <header className="dashboard-header">
           <div>
-            <h1 style={{ fontSize: '24px', color: '#1e293b' }}>Expense Tracker Dashboard</h1>
-            <p style={{ color: '#64748b', fontSize: '14px', marginTop: '4px' }}>
+            <h1 style={{ fontSize: "24px", color: "#1e293b" }}>
+              Expense Tracker Dashboard
+            </h1>
+            <p style={{ color: "#64748b", fontSize: "14px", marginTop: "4px" }}>
               Welcome back! You are securely logged in.
             </p>
           </div>
@@ -38,19 +46,21 @@ function DashboardPage() {
             disabled={loggingOut}
             className="logout-btn"
           >
-            {loggingOut ? 'Logging out...' : 'Logout'}
+            {loggingOut ? "Logging out..." : "Logout"}
           </button>
         </header>
 
-        <div style={{ padding: '24px 0', textAlign: 'center', color: '#64748b' }}>
+        <div
+          style={{ padding: "24px 0", textAlign: "center", color: "#64748b" }}
+        >
           <div
             style={{
-              display: 'inline-flex',
-              padding: '16px',
-              borderRadius: '50%',
-              backgroundColor: '#eef2ff',
-              color: '#4f46e5',
-              marginBottom: '16px'
+              display: "inline-flex",
+              padding: "16px",
+              borderRadius: "50%",
+              backgroundColor: "#eef2ff",
+              color: "#4f46e5",
+              marginBottom: "16px",
             }}
           >
             <svg
@@ -68,16 +78,103 @@ function DashboardPage() {
               />
             </svg>
           </div>
-          <h2 style={{ fontSize: '18px', color: '#1e293b', marginBottom: '8px' }}>
+          <h2
+            style={{ fontSize: "18px", color: "#1e293b", marginBottom: "8px" }}
+          >
             Authentication Successful
           </h2>
-          <p style={{ fontSize: '14px' }}>
-            Protected route is active and the JWT token is attached to your session.
+          <p style={{ fontSize: "14px" }}>
+            Protected route is active and the JWT token is attached to your
+            session.
           </p>
         </div>
       </div>
     </div>
   );
 }
+const DashboardPage = () => {
+  const [summary, setSummary] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+
+        const [summaryRes, statsRes] = await Promise.all([
+          axios.get("/api/v1/dashboard/summary", config),
+          axios.get("/api/v1/dashboard/stats", config),
+        ]);
+
+        if (summaryRes.data.success) setSummary(summaryRes.data.data);
+        if (statsRes.data.success) setStats(statsRes.data.data);
+      } catch (err) {
+        setError(
+          err.response?.data?.message || "Failed to load dashboard data",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading)
+    return <div className="dashboard-state">Loading dashboard...</div>;
+  if (error) return <div className="dashboard-state error">{error}</div>;
+
+  return (
+    <div className="dashboard-page">
+      <h2>Dashboard</h2>
+
+      <div className="total-hero">
+        <span>Total All-Time Expenses</span>
+        <h1>
+          $
+          {summary?.totalExpenses?.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+          }) || "0.00"}
+        </h1>
+      </div>
+
+      <div className="summary-grid">
+        <SummaryCard
+          title="This Month"
+          value={`$${summary?.monthlyTotal?.toFixed(2) || "0.00"}`}
+          color="#4F46E5"
+        />
+        <SummaryCard
+          title="Last Month"
+          value={`$${summary?.previousMonthTotal?.toFixed(2) || "0.00"}`}
+          color="#10B981"
+        />
+        <SummaryCard
+          title="Year to Date"
+          value={`$${summary?.yearlyTotal?.toFixed(2) || "0.00"}`}
+          color="#F59E0B"
+        />
+        <SummaryCard
+          title="Total Transactions"
+          value={summary?.expenseCount || 0}
+          subtitle={`Avg: $${summary?.averageExpense?.toFixed(2) || "0.00"}`}
+          color="#6B7280"
+        />
+      </div>
+
+      <div className="dashboard-main-grid">
+        <div className="grid-card">
+          <CategoryChart categories={stats?.byCategory} />
+        </div>
+        <div className="grid-card">
+          <RecentExpenses expenses={stats?.recentExpenses} />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default DashboardPage;
