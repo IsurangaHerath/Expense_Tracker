@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { logoutUser } from "../utils/api";
-import React, { useState, useEffect } from "react";
-import axios from "axios";
 import SummaryCard from "../components/SummaryCard";
 import CategoryChart from "../components/CategoryChart";
 import RecentExpenses from "../components/RecentExpenses";
@@ -12,6 +10,37 @@ import "./DashboardPage.css";
 function DashboardPage() {
   const navigate = useNavigate();
   const [loggingOut, setLoggingOut] = useState(false);
+  const [summary, setSummary] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Load dashboard data (summary + stats) for the logged-in user
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const baseUrl = "/api/v1";
+        const token = localStorage.getItem("token");
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+
+        const [summaryRes, statsRes] = await Promise.all([
+          axios.get(`${baseUrl}/dashboard/summary`, config),
+          axios.get(`${baseUrl}/dashboard/stats`, config),
+        ]);
+
+        if (summaryRes.data.success) setSummary(summaryRes.data.data);
+        if (statsRes.data.success) setStats(statsRes.data.data);
+      } catch (err) {
+        setError(
+          err.response?.data?.message || "Failed to load dashboard data",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -29,18 +58,42 @@ function DashboardPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="auth-page">
+        <div className="dashboard-container">
+          <div className="dashboard-state">Loading dashboard...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="auth-page">
+        <div className="dashboard-container">
+          <div className="dashboard-state error">{error}</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="auth-page">
-      <div className="dashboard-container">
-        <header className="dashboard-header">
-          <div>
-            <h1 style={{ fontSize: "24px", color: "#1e293b" }}>
-              Expense Tracker Dashboard
-            </h1>
-            <p style={{ color: "#64748b", fontSize: "14px", marginTop: "4px" }}>
-              Welcome back! You are securely logged in.
-            </p>
-          </div>
+    <div className="dashboard-page">
+      <header className="dashboard-header">
+        <div>
+          <h1 className="dashboard-title">Expense Tracker Dashboard</h1>
+          <p className="dashboard-subtitle">
+            Welcome back! You are securely logged in.
+          </p>
+        </div>
+        <div className="header-actions">
+          <Link to="/expenses/new" className="header-btn">
+            + Add Expense
+          </Link>
+          <Link to="/expenses" className="header-btn header-btn-secondary">
+            View Expenses
+          </Link>
           <button
             onClick={handleLogout}
             disabled={loggingOut}
@@ -48,88 +101,8 @@ function DashboardPage() {
           >
             {loggingOut ? "Logging out..." : "Logout"}
           </button>
-        </header>
-
-        <div
-          style={{ padding: "24px 0", textAlign: "center", color: "#64748b" }}
-        >
-          <div
-            style={{
-              display: "inline-flex",
-              padding: "16px",
-              borderRadius: "50%",
-              backgroundColor: "#eef2ff",
-              color: "#4f46e5",
-              marginBottom: "16px",
-            }}
-          >
-            <svg
-              width="32"
-              height="32"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <h2
-            style={{ fontSize: "18px", color: "#1e293b", marginBottom: "8px" }}
-          >
-            Authentication Successful
-          </h2>
-          <p style={{ fontSize: "14px" }}>
-            Protected route is active and the JWT token is attached to your
-            session.
-          </p>
         </div>
-      </div>
-    </div>
-  );
-}
-const DashboardPage = () => {
-  const [summary, setSummary] = useState(null);
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const config = { headers: { Authorization: `Bearer ${token}` } };
-
-        const [summaryRes, statsRes] = await Promise.all([
-          axios.get("/api/v1/dashboard/summary", config),
-          axios.get("/api/v1/dashboard/stats", config),
-        ]);
-
-        if (summaryRes.data.success) setSummary(summaryRes.data.data);
-        if (statsRes.data.success) setStats(statsRes.data.data);
-      } catch (err) {
-        setError(
-          err.response?.data?.message || "Failed to load dashboard data",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDashboardData();
-  }, []);
-
-  if (loading)
-    return <div className="dashboard-state">Loading dashboard...</div>;
-  if (error) return <div className="dashboard-state error">{error}</div>;
-
-  return (
-    <div className="dashboard-page">
-      <h2>Dashboard</h2>
+      </header>
 
       <div className="total-hero">
         <span>Total All-Time Expenses</span>
@@ -144,23 +117,23 @@ const DashboardPage = () => {
       <div className="summary-grid">
         <SummaryCard
           title="This Month"
-          value={`$${summary?.monthlyTotal?.toFixed(2) || "0.00"}`}
+          value={`$${Number(summary?.monthlyTotal || 0).toFixed(2)}`}
           color="#4F46E5"
         />
         <SummaryCard
           title="Last Month"
-          value={`$${summary?.previousMonthTotal?.toFixed(2) || "0.00"}`}
+          value={`$${Number(summary?.previousMonthTotal || 0).toFixed(2)}`}
           color="#10B981"
         />
         <SummaryCard
           title="Year to Date"
-          value={`$${summary?.yearlyTotal?.toFixed(2) || "0.00"}`}
+          value={`$${Number(summary?.yearlyTotal || 0).toFixed(2)}`}
           color="#F59E0B"
         />
         <SummaryCard
           title="Total Transactions"
           value={summary?.expenseCount || 0}
-          subtitle={`Avg: $${summary?.averageExpense?.toFixed(2) || "0.00"}`}
+          subtitle={`Avg: $${Number(summary?.averageExpense || 0).toFixed(2)}`}
           color="#6B7280"
         />
       </div>
@@ -175,6 +148,6 @@ const DashboardPage = () => {
       </div>
     </div>
   );
-};
+}
 
 export default DashboardPage;

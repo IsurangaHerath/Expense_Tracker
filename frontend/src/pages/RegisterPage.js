@@ -5,7 +5,7 @@ import InputField from '../components/InputField';
 import { registerUser } from '../utils/api';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -26,9 +26,10 @@ function RegisterPage() {
 
   // Password requirement tests
   const hasMinLength = password.length >= 8;
-  const hasLetter = /[A-Za-z]/.test(password);
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
   const hasNumber = /\d/.test(password);
-  const isPasswordValid = hasMinLength && hasLetter && hasNumber;
+  const isPasswordValid = hasMinLength && hasUpper && hasLower && hasNumber;
 
   // Validation functions
   const validateEmail = (val) => {
@@ -46,7 +47,7 @@ function RegisterPage() {
       return 'Password is required';
     }
     if (!PASSWORD_REGEX.test(val)) {
-      return 'Password must be at least 8 characters and contain both letters and numbers';
+      return 'Password must be at least 8 characters and contain an uppercase letter, a lowercase letter, and a number';
     }
     return '';
   };
@@ -235,9 +236,13 @@ function RegisterPage() {
           <span className="req-icon">{hasMinLength ? '✓' : '○'}</span>
           <span>At least 8 characters</span>
         </div>
-        <div className={`requirement-item ${hasLetter ? 'met' : 'unmet'}`}>
-          <span className="req-icon">{hasLetter ? '✓' : '○'}</span>
-          <span>At least 1 letter (a-z or A-Z)</span>
+        <div className={`requirement-item ${hasUpper ? 'met' : 'unmet'}`}>
+          <span className="req-icon">{hasUpper ? '✓' : '○'}</span>
+          <span>At least 1 uppercase letter (A-Z)</span>
+        </div>
+        <div className={`requirement-item ${hasLower ? 'met' : 'unmet'}`}>
+          <span className="req-icon">{hasLower ? '✓' : '○'}</span>
+          <span>At least 1 lowercase letter (a-z)</span>
         </div>
         <div className={`requirement-item ${hasNumber ? 'met' : 'unmet'}`}>
           <span className="req-icon">{hasNumber ? '✓' : '○'}</span>
