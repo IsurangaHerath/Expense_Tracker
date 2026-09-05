@@ -32,6 +32,7 @@ function InputField({
   isPasswordVisible = false,
   onTogglePassword,
   autoComplete,
+  inputRef,
   ...rest
 }) {
   const inputId = rest.id || `field-${name}`;
@@ -49,6 +50,7 @@ function InputField({
       <div className="input-wrapper">
         <input
           id={inputId}
+          ref={inputRef}
           type={effectiveType}
           name={name}
           value={value}
