@@ -1,0 +1,19 @@
+.category-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+}
+
+.category-badge.small {
+    padding: 2px 8px;
+    font-size: 11px;
+}
+
+.category-badge.large {
+    padding: 6px 16px;
+    font-size: 14px;
+}
