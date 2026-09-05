@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthForm from '../components/AuthForm';
 import InputField from '../components/InputField';
@@ -23,6 +23,57 @@ function RegisterPage() {
     password: '',
     confirmPassword: ''
   });
+
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const confirmPasswordRef = useRef(null);
+
+  // Sync state with the live DOM values.
+  // Browser autofill/password managers often fill inputs without firing
+  // React's synthetic events, so we attach native listeners to catch them.
+  useEffect(() => {
+    const attach = (el, handler) => {
+      if (!el) return;
+      el.addEventListener('input', handler);
+      el.addEventListener('change', handler);
+    };
+    const detach = (el, handler) => {
+      if (!el) return;
+      el.removeEventListener('input', handler);
+      el.removeEventListener('change', handler);
+    };
+
+    const syncEmail = () => {
+      const el = emailRef.current;
+      if (!el) return;
+      setEmail(el.value);
+      setFieldErrors((prev) => (prev.email ? { ...prev, email: '' } : prev));
+    };
+    const syncPassword = () => {
+      const el = passwordRef.current;
+      if (!el) return;
+      setPassword(el.value);
+      setFieldErrors((prev) => (prev.password ? { ...prev, password: '' } : prev));
+    };
+    const syncConfirmPassword = () => {
+      const el = confirmPasswordRef.current;
+      if (!el) return;
+      setConfirmPassword(el.value);
+      setFieldErrors((prev) =>
+        prev.confirmPassword ? { ...prev, confirmPassword: '' } : prev
+      );
+    };
+
+    attach(emailRef.current, syncEmail);
+    attach(passwordRef.current, syncPassword);
+    attach(confirmPasswordRef.current, syncConfirmPassword);
+
+    return () => {
+      detach(emailRef.current, syncEmail);
+      detach(passwordRef.current, syncPassword);
+      detach(confirmPasswordRef.current, syncConfirmPassword);
+    };
+  }, []);
 
   // Password requirement tests
   const hasMinLength = password.length >= 8;
@@ -96,40 +147,79 @@ function RegisterPage() {
     }
   };
 
-  // Blur validation
-  const handleEmailBlur = () => {
-    const err = validateEmail(email);
+  // Blur validation - read the live DOM value so browser autofill is respected.
+  // Only flag *format* problems on blur; "required" is only reported on submit,
+  // which avoids a false "Email/Password is required" for a freshly autofilled field.
+  const handleEmailBlur = (e) => {
+    const val = e.target.value;
+    setEmail(val);
+
+    let err = '';
+    if (val) {
+      err = validateEmail(val);
+      if (err === 'Email is required') err = '';
+    }
     setFieldErrors((prev) => ({ ...prev, email: err }));
   };
 
-  const handlePasswordBlur = () => {
-    const err = validatePassword(password);
+  const handlePasswordBlur = (e) => {
+    const val = e.target.value;
+    setPassword(val);
+
+    let err = '';
+    if (val) {
+      err = validatePassword(val);
+      if (err === 'Password is required') err = '';
+    }
     setFieldErrors((prev) => ({ ...prev, password: err }));
   };
 
-  const handleConfirmPasswordBlur = () => {
-    const err = validateConfirmPassword(confirmPassword, password);
+  const handleConfirmPasswordBlur = (e) => {
+    const val = e.target.value;
+    setConfirmPassword(val);
+
+    let err = '';
+    if (val) {
+      err = validateConfirmPassword(val, passwordRef.current?.value || password);
+    }
     setFieldErrors((prev) => ({ ...prev, confirmPassword: err }));
   };
 
-  // Form validity check for disabling submit button
-  const isFormValid =
-    email.trim() !== '' &&
-    EMAIL_REGEX.test(email.trim()) &&
-    isPasswordValid &&
-    confirmPassword !== '' &&
-    confirmPassword === password &&
-    !fieldErrors.email &&
-    !fieldErrors.password &&
-    !fieldErrors.confirmPassword;
+  // Form validity check for disabling submit button.
+  // Reads from the refs so autofilled values are always taken into account.
+  const isFormValid = (() => {
+    const emailVal = (emailRef.current?.value || email).trim();
+    const passVal = passwordRef.current?.value ?? password;
+    const confirmVal = confirmPasswordRef.current?.value ?? confirmPassword;
+    return (
+      emailVal !== '' &&
+      EMAIL_REGEX.test(emailVal) &&
+      PASSWORD_REGEX.test(passVal) &&
+      confirmVal !== '' &&
+      confirmVal === passVal &&
+      !fieldErrors.email &&
+      !fieldErrors.password &&
+      !fieldErrors.confirmPassword
+    );
+  })();
 
   // Submit Handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const emailErr = validateEmail(email);
-    const passErr = validatePassword(password);
-    const confirmPassErr = validateConfirmPassword(confirmPassword, password);
+    const form = e.currentTarget;
+    const emailVal = (form.email?.value || '').trim();
+    const passVal = form.password?.value || '';
+    const confirmPassVal = form.confirmPassword?.value || '';
+
+    // Sync state with the actual field values (handles browser autofill)
+    setEmail(emailVal);
+    setPassword(passVal);
+    setConfirmPassword(confirmPassVal);
+
+    const emailErr = validateEmail(emailVal);
+    const passErr = validatePassword(passVal);
+    const confirmPassErr = validateConfirmPassword(confirmPassVal, passVal);
 
     if (emailErr || passErr || confirmPassErr) {
       setFieldErrors({
@@ -145,7 +235,7 @@ function RegisterPage() {
     setSuccessMessage('');
 
     try {
-      const response = await registerUser(email.trim(), password);
+      const response = await registerUser(emailVal, passVal);
       if (response.data?.success || response.status === 201 || response.status === 200) {
         setSuccessMessage('Account created! Redirecting to login...');
         setTimeout(() => {
@@ -211,6 +301,7 @@ function RegisterPage() {
         error={fieldErrors.email}
         required
         autoComplete="email"
+        inputRef={emailRef}
       />
 
       <InputField
@@ -227,6 +318,7 @@ function RegisterPage() {
         isPasswordVisible={showPassword}
         onTogglePassword={() => setShowPassword((prev) => !prev)}
         autoComplete="new-password"
+        inputRef={passwordRef}
       />
 
       {/* Password Requirements Display */}
@@ -264,6 +356,7 @@ function RegisterPage() {
         isPasswordVisible={showConfirmPassword}
         onTogglePassword={() => setShowConfirmPassword((prev) => !prev)}
         autoComplete="new-password"
+        inputRef={confirmPasswordRef}
       />
     </AuthForm>
   );

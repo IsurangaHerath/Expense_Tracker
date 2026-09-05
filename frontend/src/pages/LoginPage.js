@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AuthForm from '../components/AuthForm';
@@ -19,6 +19,42 @@ function LoginPage() {
     email: '',
     password: ''
   });
+
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+
+  // Sync state with the live DOM values.
+  // Browser autofill/password managers often fill inputs without firing
+  // React's synthetic events, so we attach native listeners to catch them.
+  useEffect(() => {
+    const syncEmail = () => {
+      const el = emailRef.current;
+      if (!el) return;
+      setEmail(el.value);
+      setFieldErrors((prev) => (prev.email ? { ...prev, email: '' } : prev));
+    };
+    const syncPassword = () => {
+      const el = passwordRef.current;
+      if (!el) return;
+      setPassword(el.value);
+      setFieldErrors((prev) => (prev.password ? { ...prev, password: '' } : prev));
+    };
+
+    const emailEl = emailRef.current;
+    const passwordEl = passwordRef.current;
+
+    emailEl?.addEventListener('input', syncEmail);
+    emailEl?.addEventListener('change', syncEmail);
+    passwordEl?.addEventListener('input', syncPassword);
+    passwordEl?.addEventListener('change', syncPassword);
+
+    return () => {
+      emailEl?.removeEventListener('input', syncEmail);
+      emailEl?.removeEventListener('change', syncEmail);
+      passwordEl?.removeEventListener('input', syncPassword);
+      passwordEl?.removeEventListener('change', syncPassword);
+    };
+  }, []);
 
   // Validation functions
   const validateEmail = (val) => {
@@ -57,31 +93,53 @@ function LoginPage() {
     }
   };
 
-  // Blur validation
-  const handleEmailBlur = () => {
-    const err = validateEmail(email);
+  // Blur validation - read the live DOM value so browser autofill is respected.
+  // Only flag *format* problems on blur; "required" is only reported on submit,
+  // which avoids a false "Email is required" for a field the browser just filled.
+  const handleEmailBlur = (e) => {
+    const val = e.target.value;
+    setEmail(val);
+
+    let err = '';
+    if (val) {
+      err = validateEmail(val);
+      if (err === 'Email is required') err = '';
+    }
     setFieldErrors((prev) => ({ ...prev, email: err }));
   };
 
-  const handlePasswordBlur = () => {
-    const err = validatePassword(password);
-    setFieldErrors((prev) => ({ ...prev, password: err }));
+  const handlePasswordBlur = (e) => {
+    const val = e.target.value;
+    setPassword(val);
+    setFieldErrors((prev) => ({ ...prev, password: '' }));
   };
 
-  // Form validity check for disabling submit button
-  const isFormValid =
-    email.trim() !== '' &&
-    EMAIL_REGEX.test(email.trim()) &&
-    password.trim() !== '' &&
-    !fieldErrors.email &&
-    !fieldErrors.password;
+  // Form validity check for disabling submit button.
+  // Reads from the refs so autofilled values are always taken into account.
+  const isFormValid = (() => {
+    const emailVal = (emailRef.current?.value || email).trim();
+    const passwordVal = passwordRef.current?.value ?? password;
+    return (
+      emailVal !== '' &&
+      EMAIL_REGEX.test(emailVal) &&
+      passwordVal !== ''
+    );
+  })();
 
   // Submit Handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const emailErr = validateEmail(email);
-    const passErr = validatePassword(password);
+    const form = e.currentTarget;
+    const emailVal = (form.email?.value || '').trim();
+    const passVal = form.password?.value || '';
+
+    // Sync state with the actual field values (handles browser autofill)
+    setEmail(emailVal);
+    setPassword(passVal);
+
+    const emailErr = validateEmail(emailVal);
+    const passErr = validatePassword(passVal);
 
     if (emailErr || passErr) {
       setFieldErrors({ email: emailErr, password: passErr });
@@ -92,7 +150,7 @@ function LoginPage() {
     setError('');
 
     try {
-      const response = await loginUser(email.trim(), password);
+      const response = await loginUser(emailVal, passVal);
       const data = response.data;
 
       if (data && data.token) {
@@ -152,6 +210,7 @@ function LoginPage() {
         error={fieldErrors.email}
         required
         autoComplete="email"
+        inputRef={emailRef}
       />
 
       <InputField
@@ -168,6 +227,7 @@ function LoginPage() {
         isPasswordVisible={showPassword}
         onTogglePassword={() => setShowPassword((prev) => !prev)}
         autoComplete="current-password"
+        inputRef={passwordRef}
       />
     </AuthForm>
   );
