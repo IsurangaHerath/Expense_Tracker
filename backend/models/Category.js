@@ -3,7 +3,7 @@ const db = require("../config/database");
 const Category = {
     findAll() {
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM categories ORDER BY name";
+            const sql = "SELECT * FROM categories ORDER BY sort_order";
 
             db.all(sql, [], (err, rows) => {
                 if (err) reject(err);
