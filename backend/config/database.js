@@ -13,7 +13,7 @@ const db = new sqlite3.Database(dbpath, (err) => {
 });
 
 //Eneble foreign keys
-db.run('PRAGMA foreign_keys = ON;');
+db.run('PRAGMA goreign_keys = ON;');
 
 //create database tables and indexes
 db.serialize(() => {
@@ -23,7 +23,7 @@ db.serialize(() => {
     `CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email VARCHAR(255) NOT NULL UNIQUE,
-        password_hash VARCHAR(255) NOT NULL,
+        password TEXT NOT NULL,
         created_at DATETIME NOT NULL,
         updated_at DATETIME
     )`
