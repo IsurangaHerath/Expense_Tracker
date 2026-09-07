@@ -84,6 +84,7 @@ router.post('/login', async (req, res) => {
         error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' }
       });
     }
+    
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
