@@ -19,16 +19,30 @@ const CategoryExpenseCount = ({ categories, expenses }) => {
   return (
     <div className="category-expense-count">
       <h3 style={{ textAlign: "center" }}>
-        Category-wise Expense Count
+        Category Expense Count
       </h3>
 
-      <table style={{ width: "100%" }}>
+      <table style={{ width: "100%", fontSize: "14px" }}>
         <thead>
           <tr>
-            <th style={{ textAlign: "center" }}>
+            <th
+              style={{
+              textAlign: "center",
+              padding: "12px 20px",
+              width: "50%",
+              fontSize: "14px",
+              }}
+            >
               Category
             </th>
-            <th style={{ textAlign: "center" }}>
+            <th
+              style={{
+              textAlign: "center",
+              padding: "12px 20px",
+              width: "50%",
+              fontSize: "14px",
+              }}
+            >
               Number of Expenses
             </th>
           </tr>
