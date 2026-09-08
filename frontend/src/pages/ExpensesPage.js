@@ -7,6 +7,7 @@ import ExpenseCard from "../components/ExpenseCard";
 import { getExpenses, deleteExpense, logoutUser } from "../utils/api";
 import "./ExpensesPage.css";
 
+
 function ExpensesPage() {
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);

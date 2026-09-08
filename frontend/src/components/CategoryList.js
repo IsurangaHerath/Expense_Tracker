@@ -1,20 +1,23 @@
 import { useEffect, useState } from "react";
-import CategoryBadge from "./CategoryBadge";
+import CategoryExpenseCount from "./CategoryExpenseCount";
+import { getExpenses } from "../utils/api";
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
+  const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError("");
 
         const token = localStorage.getItem("token");
 
-        const response = await fetch(
+        // Fetch categories
+        const categoryResponse = await fetch(
           "http://localhost:3000/api/v1/categories",
           {
             headers: {
@@ -23,22 +26,30 @@ const CategoryList = () => {
           }
         );
 
-        if (!response.ok) {
+        if (!categoryResponse.ok) {
           throw new Error("Failed to fetch categories");
         }
 
-        const data = await response.json();
+        const categoryData = await categoryResponse.json();
 
-        setCategories(data.data?.categories || []);
+        setCategories(categoryData.data?.categories || []);
+
+        // Fetch all expenses
+        const expenseResponse = await getExpenses({});
+
+        setExpenses(
+          expenseResponse.data?.data?.expenses || []
+        );
+
       } catch (err) {
-        console.error("Error loading categories:", err);
-        setError("Failed to load categories");
+        console.error("Error loading category data:", err);
+        setError("Failed to load category data");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCategories();
+    fetchData();
   }, []);
 
   if (loading) {
@@ -51,28 +62,10 @@ const CategoryList = () => {
 
   return (
     <div className="category-list">
-      <h2>Categories</h2>
-
-      {categories.length === 0 ? (
-        <p>No categories found.</p>
-      ) : (
-        <div>
-          {categories.map((category) => (
-            <div
-              key={category.id}
-              style={{
-                marginBottom: "10px"
-              }}
-            >
-              <CategoryBadge
-                name={category.name}
-                color={category.color}
-                size="medium"
-              />
-            </div>
-          ))}
-        </div>
-      )}
+      <CategoryExpenseCount
+        categories={categories}
+        expenses={expenses}
+      />
     </div>
   );
 };
