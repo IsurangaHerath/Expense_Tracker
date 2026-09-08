@@ -19,7 +19,7 @@ const CategoryExpenseCount = ({ categories, expenses }) => {
   return (
     <div className="category-expense-count">
       <h3 style={{ textAlign: "center" }}>
-        Category-wise Expense Count
+        Category Expense Count
       </h3>
 
       <table style={{ width: "100%", fontSize: "14px" }}>
