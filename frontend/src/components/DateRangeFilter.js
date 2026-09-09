@@ -17,7 +17,7 @@ const DateRangeFilter = ({ startDate = '', endDate = '', onDateChange }) => {
   const validateAndSubmit = (start, end) => {
     
     if (start && end && new Date(start) > new Date(end)) {
-      setError('End date must be after start date');
+      setError('End date cannot be before start date');
       return;
     }
     setError('');
