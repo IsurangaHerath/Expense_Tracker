@@ -77,3 +77,13 @@ export const deleteExpense = (id) =>{
 
   return api.delete(`/expenses/${id}`);
 };
+
+//get dashboard summary
+export const getDashboardSummary = (params) =>{
+  return api.get('/dashboard/summary',{params});
+};
+
+//get dashboard stats
+export const getDashboardStats = () =>{
+  return api.get('/dashboard/stats');
+};
