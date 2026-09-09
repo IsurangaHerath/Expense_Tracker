@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { logoutUser } from "../utils/api";
+import { logoutUser, getDashboardSummary, getDashboardStats } from "../utils/api";
 import SummaryCard from "../components/SummaryCard";
 import CategoryChart from "../components/CategoryChart";
 import RecentExpenses from "../components/RecentExpenses";
@@ -19,13 +18,9 @@ function DashboardPage() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const baseUrl = "/api/v1";
-        const token = localStorage.getItem("token");
-        const config = { headers: { Authorization: `Bearer ${token}` } };
-
         const [summaryRes, statsRes] = await Promise.all([
-          axios.get(`${baseUrl}/dashboard/summary`, config),
-          axios.get(`${baseUrl}/dashboard/stats`, config),
+          getDashboardSummary(),
+          getDashboardStats(),
         ]);
 
         if (summaryRes.data.success) setSummary(summaryRes.data.data);
@@ -51,9 +46,7 @@ function DashboardPage() {
     } finally {
       // 1. Remove token from localStorage
       localStorage.removeItem("token");
-      // 2. Remove axios default header
-      delete axios.defaults.headers.common["Authorization"];
-      // 3. Redirect to /login
+      // 2. Redirect to /login
       navigate("/login");
     }
   };
