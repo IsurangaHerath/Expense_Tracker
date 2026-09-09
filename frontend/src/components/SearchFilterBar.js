@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import SearchBar from './searchBar';
+import SearchBar from './searchBar'; // Fixed case: './SearchBar'
 import CategoryFilter from './CategoryFilter';
 import DateRangeFilter from './DateRangeFilter';
 import './SearchFilterBar.css';
@@ -69,9 +69,10 @@ const SearchFilterBar = ({
   return (
     <div className="search-filter-bar">
 
-      {/* Search */}
+      {/* Search - key added so SearchBar resets internal state when clearAllFilters is called */}
       <div className="filter-section search-section">
         <SearchBar
+          key={filters.search ? 'active' : 'empty'}
           onSearch={handleSearch}
           placeholder="Search expenses..."
         />
