@@ -75,6 +75,8 @@ async function findAvailablePort(preferred, maxAttempts = 50) {
 const PORT_FILE = path.join(__dirname, '.active.port');
 
 async function start() {
+  await db.ready;
+
   const preferredPort = PORT;
   const port = await findAvailablePort(preferredPort);
 

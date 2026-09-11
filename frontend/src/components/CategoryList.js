@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CategoryExpenseCount from "./CategoryExpenseCount";
-import { getExpenses } from "../utils/api";
+import { getExpenses, API_BASE_URL } from "../utils/api";
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
@@ -18,7 +18,7 @@ const CategoryList = () => {
 
         // Fetch categories
         const categoryResponse = await fetch(
-          "http://localhost:3000/api/v1/categories",
+          `${API_BASE_URL}/categories`,
           {
             headers: {
               Authorization: `Bearer ${token}`
