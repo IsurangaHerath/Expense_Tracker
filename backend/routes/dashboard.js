@@ -35,12 +35,12 @@ router.get('/summary', async (req, res) => {
 
     const querySummary = `
       SELECT
-        COALESCE(SUM(amount), 0) AS totalExpenses,
-        COALESCE(SUM(CASE WHEN TO_CHAR(date::date, 'MM') = ? AND TO_CHAR(date::date, 'YYYY') = ? THEN amount ELSE 0 END), 0) AS monthlyTotal,
-        COALESCE(SUM(CASE WHEN TO_CHAR(date::date, 'MM') = ? AND TO_CHAR(date::date, 'YYYY') = ? THEN amount ELSE 0 END), 0) AS previousMonthTotal,
-        COALESCE(SUM(CASE WHEN TO_CHAR(date::date, 'YYYY') = ? THEN amount ELSE 0 END), 0) AS yearlyTotal,
-        COUNT(*) AS expenseCount,
-        COALESCE(AVG(amount), 0) AS averageExpense
+        COALESCE(SUM(amount), 0) AS "totalExpenses",
+        COALESCE(SUM(CASE WHEN TO_CHAR(date::date, 'MM') = ? AND TO_CHAR(date::date, 'YYYY') = ? THEN amount ELSE 0 END), 0) AS "monthlyTotal",
+        COALESCE(SUM(CASE WHEN TO_CHAR(date::date, 'MM') = ? AND TO_CHAR(date::date, 'YYYY') = ? THEN amount ELSE 0 END), 0) AS "previousMonthTotal",
+        COALESCE(SUM(CASE WHEN TO_CHAR(date::date, 'YYYY') = ? THEN amount ELSE 0 END), 0) AS "yearlyTotal",
+        COUNT(*) AS "expenseCount",
+        COALESCE(AVG(amount), 0) AS "averageExpense"
       FROM expenses
       WHERE user_id = ?;
     `;
@@ -78,7 +78,7 @@ router.get('/stats', async (req, res) => {
         c.color AS color,
         COALESCE(SUM(e.amount), 0) AS total,
         ROUND(
-          COALESCE(SUM(e.amount), 0) * 100.0 / NULLIF((SELECT SUM(amount) FROM expenses WHERE user_id = ?), 0),
+          (COALESCE(SUM(e.amount), 0) * 100.0 / NULLIF((SELECT SUM(amount) FROM expenses WHERE user_id = ?), 0))::numeric,
           1
         ) AS percentage
       FROM expenses e
