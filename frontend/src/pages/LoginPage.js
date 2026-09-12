@@ -173,7 +173,7 @@ function LoginPage() {
         err.response?.data?.message;
 
       if (!err.response) {
-        setError('Cannot connect to backend server. Please make sure the backend is running at http://localhost:3000');
+        setError('Cannot connect to the backend server. Please try again later.');
       } else {
         setError(backendMessage || 'Invalid email or password');
       }

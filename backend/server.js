@@ -64,17 +64,27 @@ function probePort(port) {
 }
 
 // Find the first available port starting from the preferred one.
-async function findAvailablePort(preferred, maxAttempts = 50) {
+async function findAvailablePort(preferred, maxAttempts = 200) {
   for (let p = preferred; p < preferred + maxAttempts; p++) {
     const available = await probePort(p);
     if (available) return available;
   }
+
+  // If the preferred range is blocked (e.g. by Windows/Hyper-V excluded
+  // port ranges), fall back to some common dev ports.
+  for (const p of [4000, 4100, 5000, 8080, 9000]) {
+    const available = await probePort(p);
+    if (available) return available;
+  }
+
   throw new Error(`No available port found starting from ${preferred}`);
 }
 
 const PORT_FILE = path.join(__dirname, '.active.port');
 
 async function start() {
+  await db.ready;
+
   const preferredPort = PORT;
   const port = await findAvailablePort(preferredPort);
 

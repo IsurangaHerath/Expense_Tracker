@@ -257,7 +257,7 @@ function RegisterPage() {
         err.response?.data?.message;
 
       if (!err.response) {
-        setError('Cannot connect to backend server. Please make sure the backend is running at http://localhost:3000');
+        setError('Cannot connect to the backend server. Please try again later.');
       } else if (status === 409 || errorCode === 'DUPLICATE_EMAIL') {
         setError('Email already exists');
       } else if (errorObj?.details && Array.isArray(errorObj.details) && errorObj.details.length > 0) {

@@ -3,21 +3,9 @@ const router = express.Router();
 
 const roundVal = (val) => Number((Math.round((val || 0) * 100) / 100).toFixed(2));
 
-const queryGet = (db, sql, params) =>
-  new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) reject(err);
-      else resolve(row);
-    });
-  });
+const queryGet = (db, sql, params) => db.get(sql, params);
 
-const queryAll = (db, sql, params) =>
-  new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows);
-    });
-  });
+const queryAll = (db, sql, params) => db.all(sql, params);
 
 /**
  * GET /api/v1/dashboard/summary
@@ -47,12 +35,12 @@ router.get('/summary', async (req, res) => {
 
     const querySummary = `
       SELECT
-        COALESCE(SUM(amount), 0) AS totalExpenses,
-        COALESCE(SUM(CASE WHEN strftime('%m', date) = ? AND strftime('%Y', date) = ? THEN amount ELSE 0 END), 0) AS monthlyTotal,
-        COALESCE(SUM(CASE WHEN strftime('%m', date) = ? AND strftime('%Y', date) = ? THEN amount ELSE 0 END), 0) AS previousMonthTotal,
-        COALESCE(SUM(CASE WHEN strftime('%Y', date) = ? THEN amount ELSE 0 END), 0) AS yearlyTotal,
-        COUNT(*) AS expenseCount,
-        COALESCE(AVG(amount), 0) AS averageExpense
+        COALESCE(SUM(amount), 0) AS "totalExpenses",
+        COALESCE(SUM(CASE WHEN TO_CHAR(date::date, 'MM') = ? AND TO_CHAR(date::date, 'YYYY') = ? THEN amount ELSE 0 END), 0) AS "monthlyTotal",
+        COALESCE(SUM(CASE WHEN TO_CHAR(date::date, 'MM') = ? AND TO_CHAR(date::date, 'YYYY') = ? THEN amount ELSE 0 END), 0) AS "previousMonthTotal",
+        COALESCE(SUM(CASE WHEN TO_CHAR(date::date, 'YYYY') = ? THEN amount ELSE 0 END), 0) AS "yearlyTotal",
+        COUNT(*) AS "expenseCount",
+        COALESCE(AVG(amount), 0) AS "averageExpense"
       FROM expenses
       WHERE user_id = ?;
     `;
@@ -66,7 +54,7 @@ router.get('/summary', async (req, res) => {
         monthlyTotal: roundVal(row.monthlyTotal),
         previousMonthTotal: roundVal(row.previousMonthTotal),
         yearlyTotal: roundVal(row.yearlyTotal),
-        expenseCount: row.expenseCount,
+        expenseCount: Number(row.expenseCount) || 0,
         averageExpense: roundVal(row.averageExpense)
       }
     });
@@ -90,7 +78,7 @@ router.get('/stats', async (req, res) => {
         c.color AS color,
         COALESCE(SUM(e.amount), 0) AS total,
         ROUND(
-          COALESCE(SUM(e.amount), 0) * 100.0 / NULLIF((SELECT SUM(amount) FROM expenses WHERE user_id = ?), 0),
+          (COALESCE(SUM(e.amount), 0) * 100.0 / NULLIF((SELECT SUM(amount) FROM expenses WHERE user_id = ?), 0))::numeric,
           1
         ) AS percentage
       FROM expenses e
