@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+const configuredBaseUrl = import.meta.env.VITE_API_URL || '/api/v1';
+
+export const API_BASE_URL = configuredBaseUrl.endsWith('/api/v1')
+  ? configuredBaseUrl
+  : `${configuredBaseUrl.replace(/\/+$/, '')}/api/v1`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -38,6 +42,10 @@ api.interceptors.response.use(
   }
 );
 
+// ==========================================
+// Authentication / User Profile API Methods
+// ==========================================
+
 export const loginUser = (email, password) => {
   return api.post('/auth/login', { email, password });
 };
@@ -50,26 +58,32 @@ export const logoutUser = () => {
   return api.post('/auth/logout');
 };
 
-export default api;
-
-//get all expenses
-export const getExpenses = (params) =>{
-  return api.get('/expenses',{params});
+export const changePassword = (passwordData) => {
+  return api.post('/auth/change-password', passwordData);
 };
 
-//get a single expenses by ID
-export const getExpenseById = (id) =>{
+// ==========================================
+// Expense API Methods
+// ==========================================
+
+// Get all expenses
+export const getExpenses = (params) => {
+  return api.get('/expenses', { params });
+};
+
+// Get a single expense by ID
+export const getExpenseById = (id) => {
   return api.get(`/expenses/${id}`);
 };
 
-//create a new expenses
-export const createExpense = (expenseData) =>{
-  return api.post('/expenses/',expenseData);
+// Create a new expense
+export const createExpense = (expenseData) => {
+  return api.post('/expenses/', expenseData);
 };
 
-//update an exitiing expense
-export const updateExpense = (id, expenseData) =>{
-  return api.put(`/expenses/${id}`,expenseData);
+// Update an existing expense
+export const updateExpense = (id, expenseData) => {
+  return api.put(`/expenses/${id}`, expenseData);
 };
 
 // Delete an expense
@@ -78,12 +92,17 @@ export const deleteExpense = (id) => {
 };
 
 // ==========================================
-// Authentication / User Profile API Methods
+// Dashboard API Methods
 // ==========================================
 
-// Change user password
-export const changePassword = (passwordData) => {
-  return api.post('/auth/change-password', passwordData);
+// Get dashboard summary
+export const getDashboardSummary = (params) => {
+  return api.get('/dashboard/summary', { params });
+};
+
+// Get dashboard stats
+export const getDashboardStats = () => {
+  return api.get('/dashboard/stats');
 };
 
 // ==========================================
@@ -113,4 +132,6 @@ export const toggleUserStatus = (id, status) => {
 // Delete user account
 export const deleteUser = (id) => {
   return api.delete(`/admin/users/${id}`);
-};
+};
+
+export default api;
