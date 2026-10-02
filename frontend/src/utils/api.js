@@ -72,8 +72,45 @@ export const updateExpense = (id, expenseData) =>{
   return api.put(`/expenses/${id}`,expenseData);
 };
 
-//Delete an expense
-export const deleteExpense = (id) =>{
-
+// Delete an expense
+export const deleteExpense = (id) => {
   return api.delete(`/expenses/${id}`);
 };
+
+// ==========================================
+// Authentication / User Profile API Methods
+// ==========================================
+
+// Change user password
+export const changePassword = (passwordData) => {
+  return api.post('/auth/change-password', passwordData);
+};
+
+// ==========================================
+// Admin User Management API Methods
+// ==========================================
+
+// Get all users (supports optional search and filter params)
+export const getUsers = (params) => {
+  return api.get('/admin/users', { params });
+};
+
+// Get a single user by ID
+export const getUserById = (id) => {
+  return api.get(`/admin/users/${id}`);
+};
+
+// Update user details (e.g. email, role, status)
+export const updateUser = (id, userData) => {
+  return api.put(`/admin/users/${id}`, userData);
+};
+
+// Toggle user status (e.g. enable/disable account)
+export const toggleUserStatus = (id, status) => {
+  return api.patch(`/admin/users/${id}/status`, { status });
+};
+
+// Delete user account
+export const deleteUser = (id) => {
+  return api.delete(`/admin/users/${id}`);
+};

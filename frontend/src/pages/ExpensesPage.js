@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 import SearchBar from "../components/searchBar";
 import CategoryFilter from "../components/CategoryFilter";
 import CategoryList from "../components/CategoryList";
 import ExpenseCard from "../components/ExpenseCard";
-import { getExpenses, deleteExpense, logoutUser } from "../utils/api";
+import { getExpenses, deleteExpense } from "../utils/api";
 import "./ExpensesPage.css";
 
 
@@ -92,29 +93,14 @@ function ExpensesPage() {
 
   return (
     <div className="expenses-page">
-      <header className="dashboard-header">
-        <div>
-          <h1 className="dashboard-title">My Expenses</h1>
-          <p className="dashboard-subtitle">
-            Search, filter, and manage your recorded expenses.
-          </p>
-        </div>
-        <div className="header-actions">
-          <Link to="/dashboard" className="header-btn header-btn-secondary">
-            Dashboard
-          </Link>
-          <Link to="/expenses/new" className="header-btn">
-            + Add Expense
-          </Link>
-          <button
-            onClick={handleLogout}
-            disabled={loggingOut}
-            className="logout-btn"
-          >
-            {loggingOut ? "Logging out..." : "Logout"}
-          </button>
-        </div>
-      </header>
+      <Navbar
+        title="My Expenses"
+        subtitle="Search, filter, and manage your recorded expenses."
+      >
+        <Link to="/expenses/new" className="header-btn header-btn-primary">
+          + Add Expense
+        </Link>
+      </Navbar>
 
       <div className="expenses-toolbar">
         <SearchBar onSearch={(q) => setSearch(q)} />

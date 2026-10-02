@@ -156,6 +156,9 @@ function LoginPage() {
       if (data && data.token) {
         // Save token to localStorage
         localStorage.setItem('token', data.token);
+        if (data.user) {
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
 
         // Set axios default header
         axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;

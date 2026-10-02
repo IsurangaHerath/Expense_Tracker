@@ -14,7 +14,7 @@ const expenseRoutes = require('./routes/expenses');
 const dashboardRoutes = require('./routes/dashboard');
 
 const app = express();
-const PORT = process.env.port || 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors({
