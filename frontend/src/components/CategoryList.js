@@ -62,12 +62,12 @@ const CategoryList = () => {
 
   return (
     <div className="category-list">
-      <CategoryExpenseCount
-        categories={categories}
-        expenses={expenses}
-      />
+        <CategoryExpenseCount
+            categories={categories}
+            expenses={expenses}
+        />
     </div>
-  );
+);
 };
 
 export default CategoryList;
