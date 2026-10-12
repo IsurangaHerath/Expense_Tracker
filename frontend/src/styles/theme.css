@@ -1,0 +1,195 @@
+/* =========================================
+   EXPENSE TRACKER - LIGHT / DARK THEME
+   ========================================= */
+
+/* ---------- Global Transition ---------- */
+
+body {
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease;
+}
+
+
+/* =========================================
+   LIGHT MODE
+   ========================================= */
+
+body.light-mode {
+    background-color: #f5f7fa;
+    color: #1f2937;
+}
+
+
+/* =========================================
+   DARK MODE - GLOBAL
+   ========================================= */
+
+body.dark-mode {
+    background-color: #121212;
+    color: #f5f5f5;
+}
+
+
+/* ---------- Main Page Backgrounds ---------- */
+
+body.dark-mode .dashboard-page,
+body.dark-mode .expenses-page,
+body.dark-mode .expense-form-page,
+body.dark-mode .auth-page {
+    background-color: #121212;
+    color: #f5f5f5;
+}
+
+
+/* ---------- Headers ---------- */
+
+body.dark-mode .dashboard-header {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+body.dark-mode .dashboard-title,
+body.dark-mode .dashboard-subtitle {
+    color: #ffffff;
+}
+
+
+/* ---------- Cards ---------- */
+
+body.dark-mode .grid-card,
+body.dark-mode .summary-card,
+body.dark-mode .expense-card,
+body.dark-mode .total-hero {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+
+/* ---------- General Text ---------- */
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode p,
+body.dark-mode label {
+    color: #f5f5f5;
+}
+
+
+/* ---------- Tables ---------- */
+
+body.dark-mode table {
+    background-color: #1e1e1e;
+    color: #f5f5f5;
+}
+
+body.dark-mode th {
+    background-color: #2a2a2a;
+    color: #ffffff;
+}
+
+body.dark-mode td {
+    color: #f5f5f5;
+    border-color: #3a3a3a;
+}
+
+body.dark-mode tr {
+    border-color: #3a3a3a;
+}
+
+
+/* ---------- Inputs ---------- */
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background-color: #2a2a2a;
+    color: #ffffff;
+    border-color: #444444;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: #aaaaaa;
+}
+
+
+/* ---------- Buttons ---------- */
+
+body.dark-mode button {
+    color: #ffffff;
+}
+
+
+/* ---------- Links ---------- */
+
+body.dark-mode a {
+    color: #93c5fd;
+}
+
+
+/* =========================================
+   CATEGORY SECTION
+   ========================================= */
+
+body.dark-mode .category-list,
+body.dark-mode .category-expense-count {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+body.dark-mode .category-item {
+    color: #f5f5f5;
+}
+
+
+/* =========================================
+   CHART
+   ========================================= */
+
+body.dark-mode .chart-wrapper {
+    color: #ffffff;
+}
+
+body.dark-mode .chart-wrapper h3 {
+    color: #ffffff;
+}
+
+
+/* =========================================
+   THEME TOGGLE
+   ========================================= */
+
+.category-theme-control {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.theme-toggle {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.light-mode .theme-toggle {
+    background-color: #1f2937;
+    color: #ffffff;
+}
+
+.dark-mode .theme-toggle {
+    background-color: #f5f5f5;
+    color: #1f2937;
+}
+
+.theme-toggle:hover {
+    transform: translateY(-1px);
+}
