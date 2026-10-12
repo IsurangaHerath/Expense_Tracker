@@ -21,7 +21,7 @@ const CategoryChart = ({ categories }) => {
         <BarChart data={categories}>
           <XAxis dataKey="category" />
           <YAxis />
-          <Tooltip formatter={(value) => `$${value}`} />
+          <Tooltip formatter={(value) => `Rs.${Number(value).toLocaleString("en-US", {minimumFractionDigits:2})}`} />
           <Bar dataKey="total">
             {categories.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color || "#4F46E5"} />
@@ -37,7 +37,7 @@ const CategoryChart = ({ categories }) => {
               style={{ backgroundColor: cat.color || "#4F46E5" }}
             ></span>
             <span>
-              {cat.category}: <strong>${cat.total.toFixed(2)}</strong> (
+              {cat.category}: <strong>Rs.{cat.total.toLocaleString("en-US", {minimumFractionDigits: 2 ,maximumFractionDigits: 2})}</strong> (
               {cat.percentage}%)
             </span>
           </div>
