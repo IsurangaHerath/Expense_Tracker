@@ -24,7 +24,7 @@ const ExpenseCard = ({ expense, onEdit, onDelete }) => {
                         {category}
                     </span>
                     <span className="expense-amount">
-                        ${Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        Rs.{Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </span>
                 </div>
                 <div className="expense-title">{description || 'Expense'}</div>
