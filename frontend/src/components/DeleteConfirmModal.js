@@ -45,7 +45,7 @@ const DeleteConfirmModal = ({ isOpen, expense, onClose, onSuccess }) => {
             {expense.description || 'No Description'}
           </p>
           <p className="text-sm text-gray-600">
-            Amount: <span className="font-bold text-gray-900">${expense.amount}</span>
+            Amount: <span className="font-bold text-gray-900">Rs.{Number(expense.amount).toLocaleString("en-US", {minimumFractionDigits: 2 ,maximumFractionDigits: 2})}</span>
           </p>
         </div>
 

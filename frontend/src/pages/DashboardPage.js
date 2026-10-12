@@ -100,7 +100,7 @@ function DashboardPage() {
       <div className="total-hero">
         <span>Total All-Time Expenses</span>
         <h1>
-          $
+          Rs.
           {summary?.totalExpenses?.toLocaleString("en-US", {
             minimumFractionDigits: 2,
           }) || "0.00"}
@@ -110,23 +110,23 @@ function DashboardPage() {
       <div className="summary-grid">
         <SummaryCard
           title="This Month"
-          value={`$${Number(summary?.monthlyTotal || 0).toFixed(2)}`}
+          value={`Rs.${Number(summary?.monthlyTotal || 0).toLocaleString("en-US", {minimumFractionDigits: 2 ,maximumFractionDigits: 2})}`}
           color="#4F46E5"
         />
         <SummaryCard
           title="Last Month"
-          value={`$${Number(summary?.previousMonthTotal || 0).toFixed(2)}`}
+          value={`Rs.${Number(summary?.previousMonthTotal || 0).toLocaleString("en-US", {minimumFractionDigits: 2 ,maximumFractionDigits: 2})}`}
           color="#10B981"
         />
         <SummaryCard
           title="Year to Date"
-          value={`$${Number(summary?.yearlyTotal || 0).toFixed(2)}`}
+          value={`Rs.${Number(summary?.yearlyTotal || 0).toLocaleString("en-US", {minimumFractionDigits: 2 ,maximumFractionDigits: 2})}`}
           color="#F59E0B"
         />
         <SummaryCard
           title="Total Transactions"
           value={summary?.expenseCount || 0}
-          subtitle={`Avg: $${Number(summary?.averageExpense || 0).toFixed(2)}`}
+          subtitle={`Avg: Rs.${Number(summary?.averageExpense || 0).toLocaleString("en-US", {minimumFractionDigits: 2 ,maximumFractionDigits: 2})}`}
           color="#6B7280"
         />
       </div>
