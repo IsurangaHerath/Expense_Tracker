@@ -1,26 +1,13 @@
 const db = require("../config/database");
 
 const Category = {
-    findAll() {
-        return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM categories ORDER BY name";
-
-            db.all(sql, [], (err, rows) => {
-                if (err) reject(err);
-                else resolve(rows);
-            });
-        });
+    async findAll() {
+        return db.all("SELECT * FROM categories ORDER BY name");
     },
 
-    findById(id) {
-        return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM categories WHERE id = ?";
-
-            db.get(sql, [id], (err, row) => {
-                if (err) reject(err);
-                else resolve(row || null);
-            });
-        });
+    async findById(id) {
+        const row = await db.get("SELECT * FROM categories WHERE id = $1", [id]);
+        return row ?? null;
     }
 };
 

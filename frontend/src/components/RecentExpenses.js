@@ -25,7 +25,7 @@ const RecentExpenses = ({ expenses }) => {
                 {item.category_name}
               </span>
               <span className="item-amount">
-                -${Number(item.amount).toFixed(2)}
+                Rs.{Number(item.amount).toLocaleString("en-US", {minimumFractionDigits: 2 ,maximumFractionDigits: 2})}
               </span>
             </div>
           </li>

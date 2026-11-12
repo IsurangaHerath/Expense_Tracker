@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_BASE_URL } from "../utils/api";
 
 const CategoryDropdown = ({
   categories: providedCategories,
@@ -24,7 +25,7 @@ const CategoryDropdown = ({
         const token = localStorage.getItem("token");
 
         const response = await fetch(
-          "http://localhost:3000/api/v1/categories",
+          `${API_BASE_URL}/categories`,
           {
             headers: {
               Authorization: `Bearer ${token}`

@@ -1,23 +1,17 @@
 const db = require("../config/database");
 
 const User = {
-    findByEmail(email) {
-        return new Promise((resolve, reject) => {
-            db.get("SELECT * FROM users WHERE email = ?", [email.toLowerCase().trim()], (err, row) => {
-                if (err) reject(err);
-                else resolve(row || null);
-            });
-        });
+    async findByEmail(email) {
+        const row = await db.get("SELECT * FROM users WHERE email = $1", [email.toLowerCase().trim()]);
+        return row ?? null;
     },
 
-    create(email, passwordHash) {
-        return new Promise((resolve, reject) => {
-            const sql = "INSERT INTO users (email, password, created_at) VALUES (?, ?, datetime('now'))";
-            db.run(sql, [email.toLowerCase().trim(), passwordHash], function (err) {
-                if (err) reject(err);
-                else resolve({ id: this.lastID, email: email.toLowerCase().trim() });
-            });
-        });
+    async create(email, passwordHash) {
+        const result = await db.run(
+            "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id",
+            [email.toLowerCase().trim(), passwordHash]
+        );
+        return { id: result.lastID, email: email.toLowerCase().trim() };
     }
 };
 
