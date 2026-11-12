@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 import { logoutUser, getDashboardSummary, getDashboardStats } from "../utils/api";
 import SummaryCard from "../components/SummaryCard";
 import CategoryChart from "../components/CategoryChart";
@@ -44,8 +45,9 @@ function DashboardPage() {
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
-      // 1. Remove token from localStorage
+      // 1. Remove token and user from localStorage
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
       // 2. Redirect to /login
       navigate("/login");
     }
@@ -73,29 +75,14 @@ function DashboardPage() {
 
   return (
     <div className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <h1 className="dashboard-title">Expense Tracker Dashboard</h1>
-          <p className="dashboard-subtitle">
-            Welcome back! You are securely logged in.
-          </p>
-        </div>
-        <div className="header-actions">
-          <Link to="/expenses/new" className="header-btn">
-            + Add Expense
-          </Link>
-          <Link to="/expenses" className="header-btn header-btn-secondary">
-            View Expenses
-          </Link>
-          <button
-            onClick={handleLogout}
-            disabled={loggingOut}
-            className="logout-btn"
-          >
-            {loggingOut ? "Logging out..." : "Logout"}
-          </button>
-        </div>
-      </header>
+      <Navbar
+        title="Expense Tracker Dashboard"
+        subtitle="Welcome back! You are securely logged in."
+      >
+        <Link to="/expenses/new" className="header-btn header-btn-primary">
+          + Add Expense
+        </Link>
+      </Navbar>
 
       <div className="total-hero">
         <span>Total All-Time Expenses</span>

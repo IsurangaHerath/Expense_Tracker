@@ -6,21 +6,34 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import ExpensesPage from './pages/ExpensesPage';
 import ExpenseFormPage from './pages/ExpenseFormPage';
+import ChangePasswordPage from './pages/ChangePasswordPage';
+import AdminUsersPage from './pages/AdminUsersPage';
+import { isAuthenticated, isAdmin, getToken } from './utils/auth';
 import './styles/auth.css';
 
-// Protected Route Component
+// Protected Route Component for Authenticated Users
 function ProtectedRoute({ children }) {
-  const token = localStorage.getItem('token');
-  if (!token) {
+  if (!isAuthenticated()) {
     return <Navigate to="/login" replace />;
   }
   return children;
 }
 
+// Protected Route Component for Administrator Users
+function AdminRoute({ children }) {
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" replace />;
+  }
+  if (!isAdmin()) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
+}
+
 function App() {
-  // On App Load: Check if token exists in localStorage and set axios default header
+  // On App Load: Check if token exists and set axios default authorization header
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = getToken();
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     }
@@ -32,7 +45,7 @@ function App() {
         <Route
           path="/"
           element={
-            localStorage.getItem('token') ? (
+            isAuthenticated() ? (
               <Navigate to="/dashboard" replace />
             ) : (
               <Navigate to="/login" replace />
@@ -41,6 +54,8 @@ function App() {
         />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        
+        {/* User Protected Routes */}
         <Route
           path="/dashboard"
           element={
@@ -73,6 +88,33 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/change-password"
+          element={
+            <ProtectedRoute>
+              <ChangePasswordPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Administrator Protected Routes */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <Navigate to="/admin/users" replace />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <AdminRoute>
+              <AdminUsersPage />
+            </AdminRoute>
+          }
+        />
+
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

@@ -42,6 +42,10 @@ api.interceptors.response.use(
   }
 );
 
+// ==========================================
+// Authentication / User Profile API Methods
+// ==========================================
+
 export const loginUser = (email, password) => {
   return api.post('/auth/login', { email, password });
 };
@@ -54,40 +58,80 @@ export const logoutUser = () => {
   return api.post('/auth/logout');
 };
 
-export default api;
-
-//get all expenses
-export const getExpenses = (params) =>{
-  return api.get('/expenses',{params});
+export const changePassword = (passwordData) => {
+  return api.post('/auth/change-password', passwordData);
 };
 
-//get a single expenses by ID
-export const getExpenseById = (id) =>{
+// ==========================================
+// Expense API Methods
+// ==========================================
+
+// Get all expenses
+export const getExpenses = (params) => {
+  return api.get('/expenses', { params });
+};
+
+// Get a single expense by ID
+export const getExpenseById = (id) => {
   return api.get(`/expenses/${id}`);
 };
 
-//create a new expenses
-export const createExpense = (expenseData) =>{
-  return api.post('/expenses/',expenseData);
+// Create a new expense
+export const createExpense = (expenseData) => {
+  return api.post('/expenses/', expenseData);
 };
 
-//update an exitiing expense
-export const updateExpense = (id, expenseData) =>{
-  return api.put(`/expenses/${id}`,expenseData);
+// Update an existing expense
+export const updateExpense = (id, expenseData) => {
+  return api.put(`/expenses/${id}`, expenseData);
 };
 
-//Delete an expense
-export const deleteExpense = (id) =>{
-
+// Delete an expense
+export const deleteExpense = (id) => {
   return api.delete(`/expenses/${id}`);
 };
 
-//get dashboard summary
-export const getDashboardSummary = (params) =>{
-  return api.get('/dashboard/summary',{params});
+// ==========================================
+// Dashboard API Methods
+// ==========================================
+
+// Get dashboard summary
+export const getDashboardSummary = (params) => {
+  return api.get('/dashboard/summary', { params });
 };
 
-//get dashboard stats
-export const getDashboardStats = () =>{
+// Get dashboard stats
+export const getDashboardStats = () => {
   return api.get('/dashboard/stats');
 };
+
+// ==========================================
+// Admin User Management API Methods
+// ==========================================
+
+// Get all users (supports optional search and filter params)
+export const getUsers = (params) => {
+  return api.get('/admin/users', { params });
+};
+
+// Get a single user by ID
+export const getUserById = (id) => {
+  return api.get(`/admin/users/${id}`);
+};
+
+// Update user details (e.g. email, role, status)
+export const updateUser = (id, userData) => {
+  return api.put(`/admin/users/${id}`, userData);
+};
+
+// Toggle user status (e.g. enable/disable account)
+export const toggleUserStatus = (id, status) => {
+  return api.patch(`/admin/users/${id}/status`, { status });
+};
+
+// Delete user account
+export const deleteUser = (id) => {
+  return api.delete(`/admin/users/${id}`);
+};
+
+export default api;

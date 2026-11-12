@@ -1,0 +1,64 @@
+/* Navbar Styling - Reuses design tokens */
+.app-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 24px;
+}
+
+.navbar-brand-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.header-btn-primary {
+  background-color: #4f46e5;
+  color: #ffffff;
+}
+
+.header-btn-primary:hover {
+  background-color: #4338ca;
+}
+
+.admin-nav-btn {
+  border-color: #f59e0b !important;
+  color: #b45309 !important;
+  font-weight: 700 !important;
+}
+
+.admin-nav-btn.header-btn-primary {
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+}
+
+.admin-nav-btn:hover {
+  background-color: #fef3c7 !important;
+}
+
+.admin-nav-btn.header-btn-primary:hover {
+  background-color: #b45309 !important;
+}
+
+@media (max-width: 768px) {
+  .app-navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .navbar-links {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
